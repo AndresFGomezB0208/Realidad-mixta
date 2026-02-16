@@ -253,14 +253,20 @@ function update() {
         updateTruthTableGame(a, b, c);
     }
 
+    const statusPanel = document.getElementById('status-panel');
+
+    // ... [existing code] ...
+
     // Output UI
     outputVal.textContent = out;
     if (out === 1) {
         outputLight.classList.add('on');
         box.classList.add('open');
+        statusPanel.classList.add('move-up');
     } else {
         outputLight.classList.remove('on');
         box.classList.remove('open');
+        statusPanel.classList.remove('move-up');
     }
 }
 
