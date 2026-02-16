@@ -237,11 +237,11 @@ input:checked+.slider:before {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 40px;
+    /* Increased space to prevent overlap */
     font-size: 1.2rem;
     font-weight: bold;
     z-index: 20;
-    /* Ensure text is above everything */
 }
 
 .box {
@@ -351,8 +351,8 @@ input:checked+.slider:before {
 }
 
 .box.open .cat {
-    transform: translateY(-70px);
-    /* Pop out almost completely */
+    transform: translateY(-85px);
+    /* Pop out completely */
 }
 
 .box.open .cat .mouth {
