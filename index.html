@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +9,17 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
     <!-- Diagrama Explicativo (Overlay) -->
     <button id="btn-explain" class="icon-btn" title="Ver Diagrama">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
         Diagrama
     </button>
 
@@ -29,16 +36,41 @@
 
     <main class="container">
         <h1>Simulador de Compuertas Lógicas</h1>
-        
-        <!-- Selección de Compuertas -->
-        <div class="gate-controls">
-            <button class="gate-btn" data-gate="AND">AND</button>
-            <button class="gate-btn" data-gate="OR">OR</button>
-            <button class="gate-btn" data-gate="NOT">NOT</button>
-            <button class="gate-btn" data-gate="NAND">NAND</button>
-            <button class="gate-btn" data-gate="NOR">NOR</button>
-            <button class="gate-btn" data-gate="XOR">XOR</button>
-            <button class="gate-btn special" data-gate="CIRCUIT">CIRCUITO MIXTO</button>
+
+        <!-- Controls Nav -->
+        <nav class="controls-nav">
+            <!-- Learning Mode (Standard) -->
+            <div class="dropdown">
+                <button class="nav-btn">PUERTAS LÓGICAS ▼</button>
+                <div class="dropdown-content">
+                    <button class="gate-btn" data-gate="AND">AND</button>
+                    <button class="gate-btn" data-gate="OR">OR</button>
+                    <button class="gate-btn" data-gate="NOT">NOT</button>
+                    <button class="gate-btn" data-gate="NAND">NAND</button>
+                    <button class="gate-btn" data-gate="NOR">NOR</button>
+                    <button class="gate-btn" data-gate="XOR">XOR</button>
+                </div>
+            </div>
+
+            <button class="nav-btn gate-btn special" data-gate="CIRCUIT">CIRCUITO MIXTO</button>
+
+            <!-- Game Mode (New) -->
+            <div class="dropdown">
+                <button class="nav-btn special-game">RETO (JUEGO) ▼</button>
+                <div class="dropdown-content">
+                    <button class="game-btn" data-difficulty="easy">FÁCIL</button>
+                    <button class="game-btn" data-difficulty="normal">NORMAL</button>
+                    <button class="game-btn" data-difficulty="hard">DIFÍCIL</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dynamic Title/Status -->
+        <h2 id="mode-title">Selecciona una opción</h2>
+
+        <!-- Active Diagram Display (Auto-shown) -->
+        <div id="active-diagram-container" class="diagram-box hidden">
+            <!-- Content injected by JS -->
         </div>
 
         <div class="simulation-area">
@@ -86,14 +118,18 @@
                 </div>
                 <div class="status-light" id="output-light"></div>
                 <p>Salida: <span id="output-val">0</span></p>
+                <div id="victory-message" class="hidden">¡VICTORIA! 🎉</div>
+                <button id="next-level-btn" class="hidden">Siguiente Reto</button>
             </div>
         </div>
 
         <!-- Tabla de Verdad -->
         <div class="truth-table-container">
-            <h3>Tabla de Verdad: <span id="current-gate-title">Selecciona una compuerta</span></h3>
+            <h3>Tabla de Verdad</h3>
             <table id="truth-table">
-                <thead><tr id="table-header"></tr></thead>
+                <thead>
+                    <tr id="table-header"></tr>
+                </thead>
                 <tbody id="table-body"></tbody>
             </table>
         </div>
@@ -102,4 +138,5 @@
 
     <script src="main.js"></script>
 </body>
+
 </html>
