@@ -1,0 +1,294 @@
+:root {
+    --bg-color: #1a1a2e;
+    --card-bg: #16213e;
+    --accent: #0f3460;
+    --highlight: #e94560;
+    --text-color: #f1f1f1;
+    --green: #2ecc71;
+    --red: #e74c3c;
+}
+
+body {
+    font-family: 'Roboto Mono', monospace;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+.container {
+    width: 90%;
+    max-width: 1000px;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+.hidden { display: none !important; }
+
+/* Botón Diagrama */
+#btn-explain {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: transparent;
+    border: 2px solid var(--highlight);
+    color: var(--highlight);
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+#btn-explain:hover {
+    background: var(--highlight);
+    color: white;
+}
+
+/* Modal */
+#diagram-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.diagram-content {
+    background: var(--bg-color);
+    padding: 40px;
+    border-radius: 10px;
+    position: relative;
+    max-width: 80%;
+}
+
+#close-diagram {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Controls */
+.gate-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.gate-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.gate-btn:hover, .gate-btn.active {
+    background: var(--highlight);
+    transform: translateY(-2px);
+}
+
+.gate-btn.special {
+    border: 2px solid var(--highlight);
+}
+
+.simulation-area {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+/* Interruptores */
+.switch-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0;
+    font-size: 1.2rem;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input { opacity: 0; width: 0; height: 0; }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider { background-color: var(--highlight); }
+input:checked + .slider:before { transform: translateX(26px); }
+
+/* Caja del Gato Animación */
+.cat-box-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.box {
+    width: 150px;
+    height: 100px;
+    background: #5d4037; /* Brown box */
+    position: relative;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    overflow: visible; /* Allow cat to pop out */
+}
+
+.lid {
+    width: 150px;
+    height: 20px;
+    background: #3e2723;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 5px 5px 0 0;
+    transform-origin: top;
+    transition: transform 0.5s;
+    z-index: 10;
+}
+
+.cat {
+    width: 80px;
+    height: 80px;
+    background: #333; /* Black cat */
+    position: absolute;
+    bottom: 5px; /* Inside box */
+    left: 35px;
+    border-radius: 40px 40px 0 0;
+    transform: translateY(100%); /* Hidden inside */
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cat .ears {
+    position: absolute;
+    top: -10px;
+    width: 100%;
+}
+.cat .ears::before, .cat .ears::after {
+    content: '';
+    position: absolute;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 25px solid #333;
+}
+.cat .ears::before { left: 0; }
+.cat .ears::after { right: 0; }
+
+.cat .eyes {
+    width: 10px;
+    height: 10px;
+    background: yellow;
+    border-radius: 50%;
+    box-shadow: 25px 0 0 yellow;
+    margin-right: 25px; /* Spacing for second eye */
+}
+
+.cat .paw {
+    width: 20px;
+    height: 25px;
+    background: white;
+    position: absolute;
+    top: -20px;
+    left: 60px;
+    border-radius: 10px;
+    transform: scale(0);
+    transition: transform 0.3s 0.2s; /* Delay for paw */
+}
+
+/* Active State for Cat */
+.box.open .lid {
+    transform: rotateX(180deg);
+}
+.box.open .cat {
+    transform: translateY(-40px); /* Pop out */
+}
+.box.open .cat .paw {
+    transform: scale(1); /* Paw wave */
+}
+
+.status-light {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #444;
+    transition: 0.3s;
+    box-shadow: 0 0 5px #000;
+}
+.status-light.on {
+    background: var(--green);
+    box-shadow: 0 0 15px var(--green);
+}
+
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: rgba(255,255,255,0.05);
+}
+
+th, td {
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 10px;
+}
+
+th { background: rgba(0,0,0,0.3); }
+
+/* Current Row Highlight */
+.current-row {
+    background: rgba(233, 69, 96, 0.3);
+    font-weight: bold;
+}

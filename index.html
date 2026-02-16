@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caja del Gato Lógica</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Diagrama Explicativo (Overlay) -->
+    <button id="btn-explain" class="icon-btn" title="Ver Diagrama">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        Diagrama
+    </button>
+
+    <div id="diagram-overlay" class="hidden">
+        <div class="diagram-content">
+            <button id="close-diagram">X</button>
+            <h2>Diagrama Lógico</h2>
+            <div id="diagram-container">
+                <!-- SVG or Canvas content will be injected here based on selection -->
+                <p>Selecciona una compuerta para ver su diagrama.</p>
+            </div>
+        </div>
+    </div>
+
+    <main class="container">
+        <h1>Simulador de Compuertas Lógicas</h1>
+        
+        <!-- Selección de Compuertas -->
+        <div class="gate-controls">
+            <button class="gate-btn" data-gate="AND">AND</button>
+            <button class="gate-btn" data-gate="OR">OR</button>
+            <button class="gate-btn" data-gate="NOT">NOT</button>
+            <button class="gate-btn" data-gate="NAND">NAND</button>
+            <button class="gate-btn" data-gate="NOR">NOR</button>
+            <button class="gate-btn" data-gate="XOR">XOR</button>
+            <button class="gate-btn special" data-gate="CIRCUIT">CIRCUITO MIXTO</button>
+        </div>
+
+        <div class="simulation-area">
+            <!-- Entradas -->
+            <div class="inputs-panel">
+                <h3>Entradas</h3>
+                <div class="switch-container">
+                    <label>A</label>
+                    <label class="switch">
+                        <input type="checkbox" id="input-a">
+                        <span class="slider"></span>
+                    </label>
+                    <span id="val-a">0</span>
+                </div>
+                <div class="switch-container">
+                    <label>B</label>
+                    <label class="switch">
+                        <input type="checkbox" id="input-b">
+                        <span class="slider"></span>
+                    </label>
+                    <span id="val-b">0</span>
+                </div>
+                <div class="switch-container" id="container-c" style="display:none;">
+                    <label>C</label>
+                    <label class="switch">
+                        <input type="checkbox" id="input-c">
+                        <span class="slider"></span>
+                    </label>
+                    <span id="val-c">0</span>
+                </div>
+            </div>
+
+            <!-- La Caja del Gato (Visualización) -->
+            <div class="cat-box-container">
+                <div class="box">
+                    <div class="lid"></div>
+                    <div class="cat">
+                        <div class="ears"></div>
+                        <div class="face">
+                            <div class="eyes"></div>
+                            <div class="nose"></div>
+                        </div>
+                        <div class="paw"></div>
+                    </div>
+                </div>
+                <div class="status-light" id="output-light"></div>
+                <p>Salida: <span id="output-val">0</span></p>
+            </div>
+        </div>
+
+        <!-- Tabla de Verdad -->
+        <div class="truth-table-container">
+            <h3>Tabla de Verdad: <span id="current-gate-title">Selecciona una compuerta</span></h3>
+            <table id="truth-table">
+                <thead><tr id="table-header"></tr></thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <script src="main.js"></script>
+</body>
+</html>
