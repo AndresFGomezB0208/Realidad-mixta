@@ -108,6 +108,11 @@
 
             <!-- La Caja del Gato (Visualización) -->
             <div class="cat-box-container">
+                <div class="status-panel">
+                    <p>Salida: <span id="output-val">0</span></p>
+                    <div class="status-light" id="output-light"></div>
+                </div>
+
                 <div class="box">
                     <div class="lid"></div>
                     <div class="cat">
@@ -115,12 +120,11 @@
                         <div class="face">
                             <div class="eyes"></div>
                             <div class="nose"></div>
+                            <div class="mouth"></div>
                         </div>
                         <div class="paw"></div>
                     </div>
                 </div>
-                <div class="status-light" id="output-light"></div>
-                <p>Salida: <span id="output-val">0</span></p>
                 <div id="victory-message" class="hidden">¡VICTORIA! 🎉</div>
                 <button id="next-level-btn" class="hidden">Siguiente Reto</button>
             </div>

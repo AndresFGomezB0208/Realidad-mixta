@@ -233,6 +233,17 @@ input:checked+.slider:before {
     align-items: center;
 }
 
+.status-panel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    z-index: 20;
+    /* Ensure text is above everything */
+}
+
 .box {
     width: 150px;
     height: 100px;
@@ -309,6 +320,18 @@ input:checked+.slider:before {
     /* Spacing for second eye */
 }
 
+.cat .mouth {
+    width: 10px;
+    height: 5px;
+    border-bottom: 2px solid #ccc;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: 0.3s;
+}
+
 .cat .paw {
     width: 20px;
     height: 25px;
@@ -328,8 +351,15 @@ input:checked+.slider:before {
 }
 
 .box.open .cat {
-    transform: translateY(-40px);
-    /* Pop out */
+    transform: translateY(-70px);
+    /* Pop out almost completely */
+}
+
+.box.open .cat .mouth {
+    border-bottom: 4px solid #fff;
+    /* Happy smile */
+    width: 14px;
+    height: 7px;
 }
 
 .box.open .cat .paw {
