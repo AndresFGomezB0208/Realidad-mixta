@@ -12,27 +12,7 @@
 
 <body>
 
-    <!-- Diagrama Explicativo (Overlay) -->
-    <button id="btn-explain" class="icon-btn" title="Ver Diagrama">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="16" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-        </svg>
-        Diagrama
-    </button>
 
-    <div id="diagram-overlay" class="hidden">
-        <div class="diagram-content">
-            <button id="close-diagram">X</button>
-            <h2>Diagrama Lógico</h2>
-            <div id="diagram-container">
-                <!-- SVG or Canvas content will be injected here based on selection -->
-                <p>Selecciona una compuerta para ver su diagrama.</p>
-            </div>
-        </div>
-    </div>
 
     <main class="container">
         <h1>Simulador de Compuertas Lógicas</h1>
@@ -41,7 +21,7 @@
         <nav class="controls-nav">
             <!-- Learning Mode (Standard) -->
             <div class="dropdown">
-                <button class="nav-btn">PUERTAS LÓGICAS ▼</button>
+                <button id="nav-gates" class="nav-btn">PUERTAS LÓGICAS ▼</button>
                 <div class="dropdown-content">
                     <button class="gate-btn" data-gate="AND">AND</button>
                     <button class="gate-btn" data-gate="OR">OR</button>
@@ -52,7 +32,7 @@
                 </div>
             </div>
 
-            <button class="nav-btn gate-btn special" data-gate="CIRCUIT">CIRCUITO MIXTO</button>
+            <button id="nav-circuit" class="nav-btn gate-btn special" data-gate="CIRCUIT">CIRCUITO MIXTO</button>
 
             <!-- Game Mode (New) -->
             <div class="dropdown">

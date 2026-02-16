@@ -183,8 +183,24 @@ function setMode(mode, subType) {
     inputs.b.disabled = false;
     inputs.b.parentElement.parentElement.style.opacity = '1';
 
+    const navGates = document.getElementById('nav-gates');
+    const navCircuit = document.getElementById('nav-circuit');
+    const navGame = document.getElementById('nav-game');
+
+    // Reset all nav buttons
+    navGates.classList.remove('active-mode');
+    navCircuit.classList.remove('active-mode');
+    navGame.classList.remove('active-mode');
+
     if (mode === 'LEARNING') {
         currentGate = subType;
+
+        if (currentGate === 'CIRCUIT') {
+            navCircuit.classList.add('active-mode');
+        } else {
+            navGates.classList.add('active-mode');
+        }
+
         modeTitle.textContent = `Modo Aprendizaje: ${currentGate}`;
 
         // Show Diagram
@@ -200,6 +216,7 @@ function setMode(mode, subType) {
 
     } else if (mode === 'GAME') {
         gameDifficulty = subType;
+        navGame.classList.add('active-mode');
         modeTitle.textContent = `Desafío: ${gameDifficulty.toUpperCase()}`;
 
         // Generate Level

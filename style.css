@@ -66,6 +66,12 @@ body {
     /* Purple */
 }
 
+.active-mode {
+    background-color: #6c5ce7 !important;
+    color: white !important;
+    box-shadow: 0 0 10px #6c5ce7;
+}
+
 .dropdown {
     position: relative;
     display: inline-block;
