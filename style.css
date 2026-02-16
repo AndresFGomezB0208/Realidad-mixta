@@ -231,6 +231,9 @@ input:checked+.slider:before {
     display: flex;
     flex-direction: column;
     align-items: center;
+    align-items: center;
+    padding-top: 50px;
+    /* Space for text to move up */
 }
 
 .status-panel {
@@ -297,10 +300,8 @@ input:checked+.slider:before {
     /* Inside box */
     left: 35px;
     border-radius: 40px 40px 0 0;
-    left: 35px;
-    border-radius: 40px 40px 0 0;
     transform: translateY(0);
-    /* Start INSIDE the box (hidden by box-front) */
+    /* Start INSIDE */
     transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     justify-content: center;
