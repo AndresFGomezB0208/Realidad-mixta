@@ -242,6 +242,11 @@ input:checked+.slider:before {
     font-size: 1.2rem;
     font-weight: bold;
     z-index: 20;
+    transition: transform 0.5s ease;
+}
+
+.status-panel.move-up {
+    transform: translateY(-40px);
 }
 
 .box {
