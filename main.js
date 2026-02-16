@@ -44,16 +44,157 @@ const explanations = {
     CIRCUIT: "Circuito: (A AND B) AND (NOT C). Salida 1 solo si A=1, B=1, y C=0."
 };
 
-// --- Diagrams ---
+// --- SVG Diagrams ---
+const gateColors = {
+    AND: '#2ecc71', // Green
+    OR: '#3498db',  // Blue
+    NOT: '#e67e22', // Orange
+    NAND: '#e74c3c', // Red
+    NOR: '#e74c3c',  // Red
+    XOR: '#9b59b6', // Purple
+    INPUT: '#f1f1f1' // White
+};
+
+function drawGateHTML(type, x, y, inputs = [], scale = 1) {
+    const color = gateColors[type] || '#fff';
+    let path = '';
+
+    // Standard shapes (approximate)
+    if (type === 'AND' || type === 'NAND') {
+        path = `M 0,0 V 40 H 20 A 20,20 0 0,0 20,0 H 0 Z`; // D shape
+        // Adjust origin to center-left
+        path = `M ${x},${y} v 40 h 20 a 20,20 0 0,0 20,-20 a 20,20 0 0,0 -20,-20 h -20 z`;
+        // Better path:
+        // Top-left at x,y. Height 40. Width 40.
+        path = `M ${x},${y} L ${x + 25},${y} A 20,20 0 0,1 ${x + 25},${y + 40} L ${x},${y + 40} Z`;
+    } else if (type === 'OR' || type === 'NOR') {
+        path = `M ${x},${y} 
+                Q ${x + 15},${y + 20} ${x},${y + 40} 
+                Q ${x + 35},${y + 40} ${x + 50},${y + 20} 
+                Q ${x + 35},${y} ${x},${y} Z`;
+    } else if (type === 'NOT') {
+        path = `M ${x},${y} L ${x + 30},${y + 20} L ${x},${y + 40} Z`; // Triangle
+    } else if (type === 'XOR') {
+        path = `M ${x - 5},${y} 
+                Q ${x + 10},${y + 20} ${x - 5},${y + 40} 
+                M ${x},${y} 
+                Q ${x + 15},${y + 20} ${x},${y + 40} 
+                Q ${x + 35},${y + 40} ${x + 50},${y + 20} 
+                Q ${x + 35},${y} ${x},${y} Z`;
+    }
+
+    let bubble = '';
+    let outX = x + 50; // Default output X
+    if (type === 'AND') outX = x + 45;
+    if (type === 'NOT') { outX = x + 30; }
+
+    if (type === 'NAND' || type === 'NOR' || type === 'NOT') {
+        bubble = `<circle cx="${outX + 5}" cy="${y + 20}" r="4" fill="none" stroke="${color}" stroke-width="2"/>`;
+        outX += 10;
+    }
+
+    // Connections lines to inputs
+    // Assuming inputs are standard 2 for most, 1 for NOT
+    // This helper is for single gate view primarily
+
+    return `<path d="${path}" fill="none" stroke="${color}" stroke-width="3" />
+            ${bubble}
+            <text x="${x + 10}" y="${y - 10}" fill="${color}" font-family="monospace" font-weight="bold">${type}</text>`;
+}
+
 function getDiagram(gate) {
-    if (gate === 'AND') return `A ----|\n      AND )---- SALIDA\nB ----|`;
-    if (gate === 'OR') return `A ----\\\n       OR )---- SALIDA\nB ----/`;
-    if (gate === 'NOT') return `A ----|>o---- SALIDA`;
-    if (gate === 'NAND') return `A ----|\n      AND )o---- SALIDA\nB ----|`;
-    if (gate === 'NOR') return `A ----\\\n       OR )o---- SALIDA\nB ----/`;
-    if (gate === 'XOR') return `A ----)\n      XOR )---- SALIDA\nB ----)`;
-    if (gate === 'CIRCUIT') return `A ---| AND |---\nB ---|     |   |\n               AND )--- SALIDA\nC ---|>o NOT --|`;
-    return "";
+    const color = gateColors[gate];
+    let content = '';
+
+    // Fixed simple view for Learning Mode
+    const w = 300, h = 150;
+    const cx = 150, cy = 75;
+
+    // Inputs at x=50, Gate at x=150, Output at x=250
+    let paths = '';
+
+    // Draw Gate
+    // Center logic? simpler to hardcode per type for best look
+
+    if (gate === 'AND') {
+        paths = `<path d="M 120,55 L 145,55 A 25,25 0 0,1 145,105 L 120,105 Z" fill="none" stroke="${color}" stroke-width="4"/>
+                 <line x1="80" y1="65" x2="120" y2="65" stroke="white" stroke-width="2"/>
+                 <line x1="80" y1="95" x2="120" y2="95" stroke="white" stroke-width="2"/>
+                 <line x1="170" y1="80" x2="220" y2="80" stroke="white" stroke-width="2"/>
+                 <text x="60" y="70" fill="white">A</text>
+                 <text x="60" y="100" fill="white">B</text>`;
+    } else if (gate === 'OR') {
+        paths = `<path d="M 120,55 Q 135,80 120,105 Q 160,105 180,80 Q 160,55 120,55 Z" fill="none" stroke="${color}" stroke-width="4"/>
+                 <line x1="80" y1="65" x2="125" y2="65" stroke="white" stroke-width="2"/>
+                 <line x1="80" y1="95" x2="125" y2="95" stroke="white" stroke-width="2"/>
+                 <line x1="180" y1="80" x2="220" y2="80" stroke="white" stroke-width="2"/>
+                 <text x="60" y="70" fill="white">A</text>
+                 <text x="60" y="100" fill="white">B</text>`;
+    } else if (gate === 'NOT') {
+        paths = `<path d="M 130,55 L 130,105 L 170,80 Z" fill="none" stroke="${color}" stroke-width="4"/>
+                 <circle cx="174" cy="80" r="4" fill="none" stroke="${color}" stroke-width="4"/>
+                 <line x1="80" y1="80" x2="130" y2="80" stroke="white" stroke-width="2"/>
+                 <line x1="178" y1="80" x2="220" y2="80" stroke="white" stroke-width="2"/>
+                 <text x="60" y="85" fill="white">A</text>`;
+    } else if (gate === 'NAND') {
+        paths = `<path d="M 120,55 L 145,55 A 25,25 0 0,1 145,105 L 120,105 Z" fill="none" stroke="${color}" stroke-width="4"/>
+                 <circle cx="174" cy="80" r="4" fill="none" stroke="${color}" stroke-width="4"/>
+                 <line x1="80" y1="65" x2="120" y2="65" stroke="white" stroke-width="2"/>
+                 <line x1="80" y1="95" x2="120" y2="95" stroke="white" stroke-width="2"/>
+                 <line x1="178" y1="80" x2="220" y2="80" stroke="white" stroke-width="2"/>
+                 <text x="60" y="70" fill="white">A</text>
+                 <text x="60" y="100" fill="white">B</text>`;
+    } else if (gate === 'NOR') {
+        paths = `<path d="M 120,55 Q 135,80 120,105 Q 160,105 180,80 Q 160,55 120,55 Z" fill="none" stroke="${color}" stroke-width="4"/>
+                 <circle cx="184" cy="80" r="4" fill="none" stroke="${color}" stroke-width="4"/>
+                 <line x1="80" y1="65" x2="125" y2="65" stroke="white" stroke-width="2"/>
+                 <line x1="80" y1="95" x2="125" y2="95" stroke="white" stroke-width="2"/>
+                 <line x1="188" y1="80" x2="220" y2="80" stroke="white" stroke-width="2"/>
+                 <text x="60" y="70" fill="white">A</text>
+                 <text x="60" y="100" fill="white">B</text>`;
+    } else if (gate === 'XOR') {
+        paths = `<path d="M 110,55 Q 125,80 110,105" fill="none" stroke="${color}" stroke-width="4"/>
+                 <path d="M 120,55 Q 135,80 120,105 Q 160,105 180,80 Q 160,55 120,55 Z" fill="none" stroke="${color}" stroke-width="4"/>
+                 <line x1="80" y1="65" x2="115" y2="65" stroke="white" stroke-width="2"/>
+                 <line x1="80" y1="95" x2="115" y2="95" stroke="white" stroke-width="2"/>
+                 <line x1="180" y1="80" x2="220" y2="80" stroke="white" stroke-width="2"/>
+                 <text x="60" y="70" fill="white">A</text>
+                 <text x="60" y="100" fill="white">B</text>`;
+    } else if (gate === 'CIRCUIT') {
+        // (A AND B) AND (NOT C)
+        // A, B -> AND1 -> AND2 <- NOT <- C
+        return `<svg width="400" height="200" viewBox="0 0 400 200">
+            <!-- A and B to AND -->
+            <text x="20" y="50" fill="white">A</text>
+            <text x="20" y="90" fill="white">B</text>
+            <path d="M 80,40 L 105,40 A 25,25 0 0,1 105,90 L 80,90 Z" fill="none" stroke="${gateColors.AND}" stroke-width="4"/>
+            <line x1="30" y1="50" x2="80" y2="50" stroke="white" stroke-width="2"/>
+            <line x1="30" y1="80" x2="80" y2="80" stroke="white" stroke-width="2"/>
+
+            <!-- C to NOT -->
+            <text x="20" y="150" fill="white">C</text>
+            <path d="M 80,130 L 80,170 L 120,150 Z" fill="none" stroke="${gateColors.NOT}" stroke-width="4"/>
+            <circle cx="124" cy="150" r="4" fill="none" stroke="${gateColors.NOT}" stroke-width="4"/>
+            <line x1="30" y1="150" x2="80" y2="150" stroke="white" stroke-width="2"/>
+
+            <!-- AND2 (Final) -->
+            <path d="M 200,85 L 225,85 A 25,25 0 0,1 225,135 L 200,135 Z" fill="none" stroke="${gateColors.AND}" stroke-width="4"/>
+            
+            <!-- Connect AND1 to AND2 -->
+            <path d="M 130,65 H 160 V 95 H 200" fill="none" stroke="white" stroke-width="2"/>
+
+            <!-- Connect NOT to AND2 -->
+            <path d="M 128,150 H 160 V 125 H 200" fill="none" stroke="white" stroke-width="2"/>
+
+            <line x1="250" y1="110" x2="300" y2="110" stroke="white" stroke-width="2"/>
+            <text x="310" y="115" fill="white" font-weight="bold">SALIDA</text>
+        </svg>`;
+    }
+
+    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+        ${paths}
+        <text x="135" y="40" fill="${color}" font-weight="bold" text-anchor="middle" font-size="16">${gate}</text>
+    </svg>`;
 }
 
 // --- Circuit Generator (Game Mode) ---
@@ -140,34 +281,75 @@ function evaluateCircuit(node, a, b, c) {
     return fn(val1 ? 1 : 0, val2 ? 1 : 0) ? 1 : 0;
 }
 
-function renderCircuitDiagram(circuit) {
-    // Generate a simple text representation
-    // Recursive print
-    let lines = [];
+// Basic recursive SVG builder for random circuits
+const svgW = 600;
+const svgH = 300;
 
-    function printNode(node, level) {
-        if (node.type === 'input') return node.id;
-        const left = printNode(node.inputs[0], level + 1);
-        const right = printNode(node.inputs[1], level + 1);
-        return `(${left} ${node.op} ${right})`;
+// We need to layout the nodes. Simple strategy:
+// Root at right.
+// Inputs at left.
+// Width divided by depth. 
+
+// 1. Calculate depth and positions
+function getDepth(node) {
+    if (node.type === 'input') return 0;
+    return 1 + Math.max(getDepth(node.inputs[0]), getDepth(node.inputs[1]));
+}
+const maxDepth = getDepth(circuit.root);
+
+let svgContent = '';
+
+function renderNode(node, x, y, level, heightScope) {
+    if (node.type === 'input') {
+        // Draw input label
+        svgContent += `<circle cx="${x}" cy="${y}" r="15" fill="#555" />`;
+        svgContent += `<text x="${x}" y="${y + 5}" fill="white" text-anchor="middle" font-weight="bold">${node.id}</text>`;
+        return { x, y };
     }
 
-    let text = printNode(circuit.root, 0);
-    // Format nicer:
-    text = "OBJETIVO: Lograr Salida 1\n\n" + text.replace(/\(/g, '[').replace(/\)/g, ']');
+    // Render children
+    const childX = x - 120; // Move left
+    const hStep = heightScope / 2;
 
-    // If difficult, maybe show just the operations list?
-    if (circuit.difficulty === 'hard') {
-        text = "OBJETIVO: Lograr Salida 1\n\nCONEXIONES:\n";
-        circuit.operations.forEach((op, i) => {
-            const in1 = op.inputs[0].id.startsWith('G') ? `Gate${op.inputs[0].id.substring(1)}` : op.inputs[0].id;
-            const in2 = op.inputs[1].id.startsWith('G') ? `Gate${op.inputs[1].id.substring(1)}` : op.inputs[1].id;
-            text += `Paso ${i + 1}: ${in1} ${op.op} ${in2} -> Gate${i}\n`;
-        });
-        text += "Salida Final: Gate" + (circuit.operations.length - 1);
+    const p1 = renderNode(node.inputs[0], childX, y - hStep / 2, level + 1, hStep);
+    const p2 = renderNode(node.inputs[1], childX, y + hStep / 2, level + 1, hStep);
+
+    // Draw connections
+    svgContent += `<path d="M ${p1.x + 15},${p1.y} C ${p1.x + 60},${p1.y} ${x - 60},${y - 10} ${x - 25},${y - 10}" fill="none" stroke="white" stroke-width="2"/>`;
+    svgContent += `<path d="M ${p2.x + 15},${p2.y} C ${p2.x + 60},${p2.y} ${x - 60},${y + 10} ${x - 25},${y + 10}" fill="none" stroke="white" stroke-width="2"/>`;
+
+    // Draw this Gate
+    const color = gateColors[node.op];
+
+    let path = '';
+    // Mini versions of paths centered at x,y
+    if (node.op === 'AND' || node.op === 'NAND') {
+        path = `M ${x - 25},${y - 20} L ${x},${y - 20} A 20,20 0 0,1 ${x},${y + 20} L ${x - 25},${y + 20} Z`;
+    } else if (node.op === 'OR' || node.op === 'NOR') {
+        path = `M ${x - 25},${y - 20} Q ${x - 10},${y} ${x - 25},${y + 20} Q ${x + 15},${y + 20} ${x + 35},${y} Q ${x + 15},${y - 20} ${x - 25},${y - 20} Z`;
+    } else if (node.op === 'XOR') {
+        path = `M ${x - 35},${y - 20} Q ${x - 20},${y} ${x - 35},${y + 20} M ${x - 25},${y - 20} Q ${x - 10},${y} ${x - 25},${y + 20} Q ${x + 15},${y + 20} ${x + 35},${y} Q ${x + 15},${y - 20} ${x - 25},${y - 20} Z`;
     }
 
-    return text;
+    svgContent += `<path d="${path}" fill="#222" stroke="${color}" stroke-width="3"/>`;
+
+    if (node.op === 'NAND' || node.op === 'NOR') {
+        svgContent += `<circle cx="${x + 38}" cy="${y}" r="4" fill="#222" stroke="${color}" stroke-width="3"/>`;
+    }
+
+    svgContent += `<text x="${x}" y="${y - 25}" fill="${color}" text-anchor="middle" font-size="12" font-weight="bold">${node.op}</text>`;
+
+    return { x: x + 35, y };
+}
+
+renderNode(circuit.root, svgW - 60, svgH / 2, 0, svgH);
+
+// Output label
+svgContent += `<text x="${svgW - 10}" y="${svgH / 2 + 5}" fill="white" font-weight="bold">OUT</text>`;
+
+return `<svg width="100%" height="300" viewBox="0 0 ${svgW} ${svgH}" preserveAspectRatio="xMidYMid meet" style="background: #111; border-radius: 8px;">
+        ${svgContent}
+    </svg>`;
 }
 
 
@@ -228,7 +410,7 @@ function setMode(mode, subType) {
 
         // Show Diagram
         diagramContainer.classList.remove('hidden');
-        diagramContainer.textContent = renderCircuitDiagram(gameCircuit);
+        diagramContainer.innerHTML = renderCircuitDiagram(gameCircuit); // Use innerHTML for SVG
     }
 
     update();
