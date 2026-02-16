@@ -116,16 +116,16 @@ body {
     border: 2px solid var(--highlight);
     border-radius: 8px;
     padding: 20px;
-    margin: 0 auto 30px auto;
+    margin: 10px;
     font-family: 'Courier New', monospace;
     white-space: pre;
     display: inline-block;
     color: #4cd137;
-    /* Retro green terminal look */
     max-width: 90%;
     overflow-x: auto;
     text-align: left;
     box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1);
+    align-self: center;
 }
 
 /* Modal (Legacy/Explanation - kept for compatibility if needed, though replaced by inline) */
