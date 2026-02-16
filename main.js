@@ -281,73 +281,74 @@ function evaluateCircuit(node, a, b, c) {
     return fn(val1 ? 1 : 0, val2 ? 1 : 0) ? 1 : 0;
 }
 
-// Basic recursive SVG builder for random circuits
-const svgW = 600;
-const svgH = 300;
+function renderCircuitDiagram(circuit) {
+    // Basic recursive SVG builder for random circuits
+    const svgW = 600;
+    const svgH = 300;
 
-// We need to layout the nodes. Simple strategy:
-// Root at right.
-// Inputs at left.
-// Width divided by depth. 
+    // We need to layout the nodes. Simple strategy:
+    // Root at right.
+    // Inputs at left.
+    // Width divided by depth. 
 
-// 1. Calculate depth and positions
-function getDepth(node) {
-    if (node.type === 'input') return 0;
-    return 1 + Math.max(getDepth(node.inputs[0]), getDepth(node.inputs[1]));
-}
-const maxDepth = getDepth(circuit.root);
+    // 1. Calculate depth and positions
+    function getDepth(node) {
+        if (node.type === 'input') return 0;
+        return 1 + Math.max(getDepth(node.inputs[0]), getDepth(node.inputs[1]));
+    }
+    const maxDepth = getDepth(circuit.root);
 
-let svgContent = '';
+    let svgContent = '';
 
-function renderNode(node, x, y, level, heightScope) {
-    if (node.type === 'input') {
-        // Draw input label
-        svgContent += `<circle cx="${x}" cy="${y}" r="15" fill="#555" />`;
-        svgContent += `<text x="${x}" y="${y + 5}" fill="white" text-anchor="middle" font-weight="bold">${node.id}</text>`;
-        return { x, y };
+    function renderNode(node, x, y, level, heightScope) {
+        if (node.type === 'input') {
+            // Draw input label
+            svgContent += `<circle cx="${x}" cy="${y}" r="15" fill="#555" />`;
+            svgContent += `<text x="${x}" y="${y + 5}" fill="white" text-anchor="middle" font-weight="bold">${node.id}</text>`;
+            return { x, y };
+        }
+
+        // Render children
+        const childX = x - 120; // Move left
+        const hStep = heightScope / 2;
+
+        const p1 = renderNode(node.inputs[0], childX, y - hStep / 2, level + 1, hStep);
+        const p2 = renderNode(node.inputs[1], childX, y + hStep / 2, level + 1, hStep);
+
+        // Draw connections
+        svgContent += `<path d="M ${p1.x + 15},${p1.y} C ${p1.x + 60},${p1.y} ${x - 60},${y - 10} ${x - 25},${y - 10}" fill="none" stroke="white" stroke-width="2"/>`;
+        svgContent += `<path d="M ${p2.x + 15},${p2.y} C ${p2.x + 60},${p2.y} ${x - 60},${y + 10} ${x - 25},${y + 10}" fill="none" stroke="white" stroke-width="2"/>`;
+
+        // Draw this Gate
+        const color = gateColors[node.op];
+
+        let path = '';
+        // Mini versions of paths centered at x,y
+        if (node.op === 'AND' || node.op === 'NAND') {
+            path = `M ${x - 25},${y - 20} L ${x},${y - 20} A 20,20 0 0,1 ${x},${y + 20} L ${x - 25},${y + 20} Z`;
+        } else if (node.op === 'OR' || node.op === 'NOR') {
+            path = `M ${x - 25},${y - 20} Q ${x - 10},${y} ${x - 25},${y + 20} Q ${x + 15},${y + 20} ${x + 35},${y} Q ${x + 15},${y - 20} ${x - 25},${y - 20} Z`;
+        } else if (node.op === 'XOR') {
+            path = `M ${x - 35},${y - 20} Q ${x - 20},${y} ${x - 35},${y + 20} M ${x - 25},${y - 20} Q ${x - 10},${y} ${x - 25},${y + 20} Q ${x + 15},${y + 20} ${x + 35},${y} Q ${x + 15},${y - 20} ${x - 25},${y - 20} Z`;
+        }
+
+        svgContent += `<path d="${path}" fill="#222" stroke="${color}" stroke-width="3"/>`;
+
+        if (node.op === 'NAND' || node.op === 'NOR') {
+            svgContent += `<circle cx="${x + 38}" cy="${y}" r="4" fill="#222" stroke="${color}" stroke-width="3"/>`;
+        }
+
+        svgContent += `<text x="${x}" y="${y - 25}" fill="${color}" text-anchor="middle" font-size="12" font-weight="bold">${node.op}</text>`;
+
+        return { x: x + 35, y };
     }
 
-    // Render children
-    const childX = x - 120; // Move left
-    const hStep = heightScope / 2;
+    renderNode(circuit.root, svgW - 60, svgH / 2, 0, svgH);
 
-    const p1 = renderNode(node.inputs[0], childX, y - hStep / 2, level + 1, hStep);
-    const p2 = renderNode(node.inputs[1], childX, y + hStep / 2, level + 1, hStep);
+    // Output label
+    svgContent += `<text x="${svgW - 10}" y="${svgH / 2 + 5}" fill="white" font-weight="bold">OUT</text>`;
 
-    // Draw connections
-    svgContent += `<path d="M ${p1.x + 15},${p1.y} C ${p1.x + 60},${p1.y} ${x - 60},${y - 10} ${x - 25},${y - 10}" fill="none" stroke="white" stroke-width="2"/>`;
-    svgContent += `<path d="M ${p2.x + 15},${p2.y} C ${p2.x + 60},${p2.y} ${x - 60},${y + 10} ${x - 25},${y + 10}" fill="none" stroke="white" stroke-width="2"/>`;
-
-    // Draw this Gate
-    const color = gateColors[node.op];
-
-    let path = '';
-    // Mini versions of paths centered at x,y
-    if (node.op === 'AND' || node.op === 'NAND') {
-        path = `M ${x - 25},${y - 20} L ${x},${y - 20} A 20,20 0 0,1 ${x},${y + 20} L ${x - 25},${y + 20} Z`;
-    } else if (node.op === 'OR' || node.op === 'NOR') {
-        path = `M ${x - 25},${y - 20} Q ${x - 10},${y} ${x - 25},${y + 20} Q ${x + 15},${y + 20} ${x + 35},${y} Q ${x + 15},${y - 20} ${x - 25},${y - 20} Z`;
-    } else if (node.op === 'XOR') {
-        path = `M ${x - 35},${y - 20} Q ${x - 20},${y} ${x - 35},${y + 20} M ${x - 25},${y - 20} Q ${x - 10},${y} ${x - 25},${y + 20} Q ${x + 15},${y + 20} ${x + 35},${y} Q ${x + 15},${y - 20} ${x - 25},${y - 20} Z`;
-    }
-
-    svgContent += `<path d="${path}" fill="#222" stroke="${color}" stroke-width="3"/>`;
-
-    if (node.op === 'NAND' || node.op === 'NOR') {
-        svgContent += `<circle cx="${x + 38}" cy="${y}" r="4" fill="#222" stroke="${color}" stroke-width="3"/>`;
-    }
-
-    svgContent += `<text x="${x}" y="${y - 25}" fill="${color}" text-anchor="middle" font-size="12" font-weight="bold">${node.op}</text>`;
-
-    return { x: x + 35, y };
-}
-
-renderNode(circuit.root, svgW - 60, svgH / 2, 0, svgH);
-
-// Output label
-svgContent += `<text x="${svgW - 10}" y="${svgH / 2 + 5}" fill="white" font-weight="bold">OUT</text>`;
-
-return `<svg width="100%" height="300" viewBox="0 0 ${svgW} ${svgH}" preserveAspectRatio="xMidYMid meet" style="background: #111; border-radius: 8px;">
+    return `<svg width="100%" height="300" viewBox="0 0 ${svgW} ${svgH}" preserveAspectRatio="xMidYMid meet" style="background: #111; border-radius: 8px;">
         ${svgContent}
     </svg>`;
 }
