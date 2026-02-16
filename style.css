@@ -249,8 +249,8 @@ input:checked+.slider:before {
 }
 
 .status-panel.move-up {
-    transform: translateY(-130px);
-    /* Move text WAY up to absolutely clear the cat */
+    transform: translateY(-200px);
+    /* Massive move to guarantee clearance */
 }
 
 .box {
