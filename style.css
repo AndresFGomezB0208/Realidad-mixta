@@ -246,7 +246,8 @@ input:checked+.slider:before {
 }
 
 .status-panel.move-up {
-    transform: translateY(-40px);
+    transform: translateY(-80px);
+    /* Move text up significantly to clear the cat */
 }
 
 .box {
@@ -296,8 +297,10 @@ input:checked+.slider:before {
     /* Inside box */
     left: 35px;
     border-radius: 40px 40px 0 0;
-    transform: translateY(100%);
-    /* Hidden inside */
+    left: 35px;
+    border-radius: 40px 40px 0 0;
+    transform: translateY(0);
+    /* Start INSIDE the box (hidden by box-front) */
     transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     justify-content: center;
